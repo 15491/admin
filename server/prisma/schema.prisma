@@ -1,0 +1,76 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model permission {
+  id                       Int                        @id @default(autoincrement())
+  title                    String                     @db.VarChar(20)
+  order_num                Int
+  parent_id                Int?
+  menu_type                Int
+  icon                     String?                    @db.VarChar(50)
+  component                String?                    @db.VarChar(50)
+  permission               String?                    @db.VarChar(50)
+  path                     String                     @db.VarChar(50)
+  create_id                BigInt?
+  update_id                BigInt?
+  status                   Int                        @default(1)
+  create_time              DateTime                   @default(now()) @db.DateTime(6)
+  update_time              DateTime                   @default(now()) @db.DateTime(6)
+  role_permission_relation role_permission_relation[]
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model role {
+  id                       BigInt                     @id @default(autoincrement())
+  role_name                String                     @db.VarChar(20)
+  role_sort                Int
+  status                   Int                        @default(1)
+  remark                   String?                    @db.VarChar(100)
+  create_id                BigInt
+  update_id                BigInt
+  create_time              DateTime                   @default(now()) @db.DateTime(6)
+  update_time              DateTime                   @default(now()) @db.DateTime(6)
+  role_permission_relation role_permission_relation[]
+  user_role_relation       user_role_relation[]
+}
+
+model role_permission_relation {
+  roleId       BigInt
+  permissionId Int
+  permission   permission @relation(fields: [permissionId], references: [id], onDelete: Cascade, map: "FK_7822b319e3e15d982d49aa50cf2")
+  role         role       @relation(fields: [roleId], references: [id], onDelete: Cascade, map: "FK_e1ca88973e6058882146e254018")
+
+  @@id([roleId, permissionId])
+  @@index([permissionId], map: "IDX_7822b319e3e15d982d49aa50cf")
+  @@index([roleId], map: "IDX_e1ca88973e6058882146e25401")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model user {
+  username           String               @db.VarChar(30)
+  password           String               @db.VarChar(50)
+  avatar             String?              @db.VarChar(200)
+  email              String?              @db.VarChar(100)
+  create_time        DateTime             @default(now()) @db.DateTime(6)
+  update_time        DateTime             @default(now()) @db.DateTime(6)
+  id                 String               @id @db.VarChar(36)
+  user_role_relation user_role_relation[]
+}
+
+model user_role_relation {
+  roleId BigInt
+  userId String @db.VarChar(36)
+  user   user   @relation(fields: [userId], references: [id], onDelete: Cascade, map: "FK_387a09a362c32ee04b33fc4eaab")
+  role   role   @relation(fields: [roleId], references: [id], onDelete: Cascade, map: "FK_bed18db98a78c46f0bcfedfe652")
+
+  @@id([roleId, userId])
+  @@index([userId], map: "IDX_387a09a362c32ee04b33fc4eaa")
+  @@index([roleId], map: "IDX_bed18db98a78c46f0bcfedfe65")
+}

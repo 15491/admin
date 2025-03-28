@@ -1,0 +1,17 @@
+{
+  "name": "@admin/root",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "admin:dev": "pnpm --filter @admin/web dev",
+    "admin:build": "pnpm --filter @admin/web build",
+    "server:dev": "pnpm --filter @admin/service start:dev",
+    "server:build": "pnpm --filter @admin/service build"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.5.2"
+}
